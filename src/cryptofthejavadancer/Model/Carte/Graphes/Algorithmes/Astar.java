@@ -8,7 +8,7 @@ package cryptofthejavadancer.Model.Carte.Graphes.Algorithmes;
 import cryptofthejavadancer.Model.Carte.Cases.Case;
 import cryptofthejavadancer.Model.Carte.Graphes.Graphe;
 import cryptofthejavadancer.Model.Carte.Graphes.Noeud;
-import cryptofthejavadancer.Model.Carte.Graphes.VertexCouple;
+import cryptofthejavadancer.Model.Carte.Graphes.NoeudCouple;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,170 +18,128 @@ import java.util.HashMap;
  */
 public class Astar {
 
-    private Integer infini;
     private Graphe graph;
     private Noeud debut;
     private Noeud fin;
-    
     private HashMap<Noeud, Integer> distance;
-    private HashMap<Noeud, Boolean> visite;
-    private HashMap<Noeud, Noeud> predecesseur;
-    
-    private ArrayList<Noeud> chemin;
+    private HashMap<Noeud, Boolean> visited;
+    private HashMap<Noeud, Noeud> predecessor;
+    private ArrayList<Noeud> path;
+    private Integer infini;
 
     public Astar(Graphe graph) {
         this.graph = graph;
-        
-        distance = new HashMap();
-        visite = new HashMap();
-        predecesseur = new HashMap();
-        
-        chemin = new ArrayList();
-        infini = null;
+        this.distance = new HashMap<Noeud, Integer>();
+        this.visited = new HashMap<Noeud, Boolean>();
+        this.predecessor = new HashMap<Noeud, Noeud>();
+        this.path = new ArrayList<Noeud>();
+        this.infini = null;
     }
-    
-    
-    public void initialisation(){
+
+    public void initialisation() {
         int max = getInfini();
-        for (Noeud n : graph.getNoeuds().values()){
-            distance.put(n, max);
-            visite.put(n, Boolean.FALSE);
-            predecesseur.put(n, null);
+        for (Noeud v : graph.getNoeuds().values()) {
+            distance.put(v, max);
+            visited.put(v, false);
+            predecessor.put(v, null);
         }
-        
         distance.put(debut, 0);
     }
-    
-    public Integer infini(){
-        Integer tot = 0;
-        
-        for (Integer i : graph.getLabels().values()){
-            tot += i;
-        }
-        return tot;
-    }
-    
-    public void Relaxing(Noeud a,Noeud b){
-        if(this.graph.getLabels().get(new VertexCouple(a,b)) != null){
-            if(distance.get(b)>(distance.get(a)+this.graph.getLabels().get(new VertexCouple(a,b)))){
-                distance.put(b, distance.get(a)+this.graph.getLabels().get(new VertexCouple(a,b)));
-                predecesseur.put(b, a);
-            }
-        }
-    }
-    
-    public Noeud plusProcheSommet(){
-      int min = getInfini()+1;
-      Noeud plusProche = null;
-        for (Noeud v : distance.keySet()){
-            if (visite.get(v)==false){
-                if (distance.get(v)<min){
+
+    public Noeud closestVertex() {
+
+        int min = getInfini() + 1;
+        Noeud plusProche = null;
+        for (Noeud v : distance.keySet()) {
+            if (visited.get(v) == false) {
+                if (heuristic(v) < min) {
                     plusProche = v;
-                    min = distance.get(v);
+                    min = heuristic(v);
                 }
             }
         }
         return plusProche;
-}
-    
- public int heuristic(Noeud v1, Noeud v2){
-     
-     double disEuclid;
-     
-     Case c1 = v1.getCase();
-     Case c2 = v2.getCase();
-     
-     double x1 = c1.getColonne();
-     double y1 = c1.getLigne();
-     
-     double x2 = c2.getColonne();
-     double y2 = c2.getLigne();
-     
-     disEuclid = Math.sqrt((Math.pow(x2-x1, 2) + Math.pow(x2-x1, 2)));
-     
-     return (int) (distance.get(v1)+disEuclid);
- }
-    
- public void calcul(Noeud _debug, Noeud _fin){
-        this.debut = _debug;
-        this.fin = _fin;
+    }
+
+    public void calcul(Noeud _debug, Noeud _fin) {
+        debut = _debug;
+        fin = _fin;
         this.initialisation();
-        
-}
 
+        while (!visited.get(fin)) {
+            Noeud a = closestVertex();
+            visited.put(a, true);
+            for (Noeud b : visited.keySet()) {
+                relaxing(a, b);
+            }
+        }
+        Noeud v = fin;
+        while (v != null) {
+            path.add(0, v);
+            v = predecessor.get(v);
+        }
+        this.path.remove(debut);
+//System.out.println(path);
 
-/////////////////////////////////getter////////////////////////////////////////////
-    
+    }
+
+    public void relaxing(Noeud a, Noeud b) {
+        if (this.graph.getLabels().get(new NoeudCouple(a, b)) != null) {
+            if (distance.get(b) > (distance.get(a) + this.graph.getLabels().get(new NoeudCouple(a, b)))) {
+                distance.put(b, (distance.get(a) + this.graph.getLabels().get(new NoeudCouple(a, b))));
+                predecessor.put(b, a);
+            }
+        }
+    }
+
+    public int getInfini() {
+        if (infini == null) {
+            infini = 0;
+            for (Integer vLabel : graph.getLabels().values()) {
+                infini += vLabel;
+            }
+            infini++;
+        }
+        return infini;
+    }
+
+    public int heuristic(Noeud v) {
+        return (int) (distance.get(v) + euclidian_distance(v, fin));
+    }
+
+    public double euclidian_distance(Noeud d, Noeud f) {
+        int ligneD = d.getCase().getLigne();
+        int colonneD = d.getCase().getColonne();
+
+        int ligneF = f.getCase().getLigne();
+        int colonneF = f.getCase().getColonne();
+
+        int distanceLargeur = Math.abs(colonneD - colonneF);
+        int distanceHauteur = Math.abs(ligneD - ligneF);
+        double max = Math.sqrt(distanceLargeur * distanceLargeur + distanceHauteur * distanceHauteur);
+        return max;
+    }
+
+    public ArrayList<Noeud> getPath() {
+        return path;
+    }
+
+    public void destroyFirst() {
+        this.path.remove(0);
+    }
+
     public Graphe getGraph() {
         return graph;
     }
 
-    public Noeud getDébut() {
-        return debut;
-    }
-
-    public Noeud getFin() {
-        return fin;
-    }
-
-    public HashMap<Noeud, Integer> getDistance() {
-        return distance;
-    }
-
-    public HashMap<Noeud, Boolean> getVisite() {
-        return visite;
-    }
-
-    public HashMap<Noeud, Noeud> getPredecesseur() {
-        return predecesseur;
-    }
-
-    public ArrayList<Noeud> getChemin() {
-        return chemin;
-    }
-
-    public Integer getInfini() {
-        if (infini == null){
-            infini = 0;
-        
-        for (Integer vLabel : graph.getLabels().values()){
-            infini += vLabel;
+    public ArrayList<Noeud> getPath(Noeud start, Noeud end) {
+        ArrayList<Noeud> pathR = new ArrayList<>();
+        Noeud v = end;
+        while (v != start) {
+            pathR.add(0, v);
+            v = predecessor.get(v);
         }
-        infini ++;
-        }
-        return infini;
-    }
-    
-    
-//////////////////////////////////////setter//////////////////////////////////
-
-    public void setGraph(Graphe graph) {
-        this.graph = graph;
+        return pathR;
     }
 
-    public void setDébut(Noeud debut) {
-        this.debut = debut;
-    }
-
-    public void setFin(Noeud fin) {
-        this.fin = fin;
-    }
-
-    public void setDistance(HashMap<Noeud, Integer> distance) {
-        this.distance = distance;
-    }
-
-    public void setVisite(HashMap<Noeud, Boolean> visite) {
-        this.visite = visite;
-    }
-
-    public void setPredecesseur(HashMap<Noeud, Noeud> predecesseur) {
-        this.predecesseur = predecesseur;
-    }
-
-    public void setChemin(ArrayList<Noeud> chemin) {
-        this.chemin = chemin;
-    }  
-    
 }
-
