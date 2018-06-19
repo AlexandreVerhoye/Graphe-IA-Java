@@ -36,4 +36,10 @@ public class Noeud {
         return this.c;
     }
 
+    public void setCase(Case c) {
+        this.c = c;
+    }
+    
+    
+
 }
