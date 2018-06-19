@@ -2,6 +2,7 @@ package cryptofthejavadancer.Model.Carte;
 
 import cryptofthejavadancer.Model.Carte.Cases.Case;
 import cryptofthejavadancer.Model.Carte.Cases.Type_Case;
+import cryptofthejavadancer.Model.Carte.Graphes.Algorithmes.Astar;
 import cryptofthejavadancer.Model.Carte.Graphes.Algorithmes.Dijkstra;
 import cryptofthejavadancer.Model.Carte.Graphes.Graphe;
 import cryptofthejavadancer.Model.Carte.Graphes.Noeud;
@@ -89,9 +90,10 @@ public class Map {
             
             debut = graphe_avance.getNoeud(this.getCase(depart.getLigne(), depart.getColonne()));
             fina = graphe_avance.getNoeud(this.getCase(fin.getLigne(), fin.getColonne()));
-            Dijkstra dij = new Dijkstra(this.graphe_avance);
+            //Dijkstra dij = new Dijkstra(this.graphe_avance);
+            Astar astar = new Astar(this.graphe_avance);
             System.out.println("\n");
-            dij.calcul(debut, fina);
+            astar.calcul(debut, fina);
             /*listeCase.stream().map((c1) -> {
                 System.out.println("");
             return c1;

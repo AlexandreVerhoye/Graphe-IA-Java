@@ -8,7 +8,7 @@ package cryptofthejavadancer.Model.Carte.Graphes.Algorithmes;
 import cryptofthejavadancer.Model.Carte.Cases.Case;
 import cryptofthejavadancer.Model.Carte.Graphes.Graphe;
 import cryptofthejavadancer.Model.Carte.Graphes.Noeud;
-import cryptofthejavadancer.Model.Carte.Graphes.NoeudCouple;
+import cryptofthejavadancer.Model.Carte.Graphes.VertexCouple;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -84,9 +84,9 @@ public class Astar {
     }
 
     public void relaxing(Noeud a, Noeud b) {
-        if (this.graph.getLabels().get(new NoeudCouple(a, b)) != null) {
-            if (distance.get(b) > (distance.get(a) + this.graph.getLabels().get(new NoeudCouple(a, b)))) {
-                distance.put(b, (distance.get(a) + this.graph.getLabels().get(new NoeudCouple(a, b))));
+        if (this.graph.getLabels().get(new VertexCouple(a, b)) != null) {
+            if (distance.get(b) > (distance.get(a) + this.graph.getLabels().get(new VertexCouple(a, b)))) {
+                distance.put(b, (distance.get(a) + this.graph.getLabels().get(new VertexCouple(a, b))));
                 predecessor.put(b, a);
             }
         }
