@@ -23,5 +23,10 @@ public class IA_Diamants extends IA {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    private Objet plusProcheDiamant(){
+        
+        return null;
+    }
+    
    
 }
