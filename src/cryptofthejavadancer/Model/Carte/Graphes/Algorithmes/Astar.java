@@ -131,6 +131,10 @@ public class Astar {
     public Graphe getGraph() {
         return graph;
     }
+    
+    public Integer getTaillePath(Noeud v) {
+        return distance.get(v);
+    }
 
     public ArrayList<Noeud> getPath(Noeud start, Noeud end) {
         ArrayList<Noeud> pathR = new ArrayList<>();

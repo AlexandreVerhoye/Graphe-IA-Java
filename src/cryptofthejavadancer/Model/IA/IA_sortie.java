@@ -88,6 +88,7 @@ public class IA_sortie extends IA {
 //            }
             algo.getGraph().getNoeuds().put(new Case_Sol(CaseSuivante.getLigne(), CaseSuivante.getColonne(), getMap()), algo.getGraph().getNoeud(CaseSuivante));
         }
+        
         System.out.println(retour);
         System.out.println(this.algo.getChemin());
         return retour;

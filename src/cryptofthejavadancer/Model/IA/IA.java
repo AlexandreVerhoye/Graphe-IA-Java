@@ -1,6 +1,9 @@
 package cryptofthejavadancer.Model.IA;
 
 import cryptofthejavadancer.Model.Carte.Cases.Case;
+import cryptofthejavadancer.Model.Carte.Graphes.Algorithmes.Astar;
+import cryptofthejavadancer.Model.Carte.Graphes.Algorithmes.Dijkstra;
+import cryptofthejavadancer.Model.Carte.Graphes.Graphe;
 import cryptofthejavadancer.Model.Carte.Map;
 import cryptofthejavadancer.Model.Entites.Entite;
 
@@ -10,12 +13,18 @@ import cryptofthejavadancer.Model.Entites.Entite;
  */
 public abstract class IA {
 
-    private Entite entite;                                                      //Entité liée à l'IA
+    public Entite entite;         
+    protected Dijkstra algoDij;
+    protected Astar algoAs; //Entité liée à l'IA
     
 //---------- CONSTRUCTEURS -----------------------------------------------------
     
     public IA(Entite _entite) {
         this.entite = _entite;
+    }
+    
+    public Graphe getGraphe(){
+        return this.algoAs.getGraph();
     }
 //------------------------------------------------------------------------------
 

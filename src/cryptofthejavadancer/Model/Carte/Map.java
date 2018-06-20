@@ -150,6 +150,13 @@ public class Map {
     
     }
     
+    public Noeud getDebut(){
+        return debut;
+    }
+    
+    public Noeud getFin(){
+        return fina;
+    }
     
     
 
